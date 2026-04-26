@@ -1,0 +1,121 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydration Command</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: monospace;
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+        }
+        h2 { border-bottom: 1px solid #333; padding-bottom: 10px; }
+        label { font-size: 1.1em; color: #888; }
+        input[type="time"] {
+            background-color: #1a1a1a;
+            color: #00ff00;
+            border: 1px solid #333;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1.2em;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            color-scheme: dark;
+        }
+        button {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #555;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        button:active { background-color: #333; }
+        #output { margin-top: 25px; font-size: 1.1em; line-height: 1.6; }
+        .danger { color: #ff4444; font-weight: bold; }
+        .optimal { color: #00ff00; font-weight: bold; }
+        .minimum { color: #ffaa00; font-weight: bold; }
+        .time-block { background: #1a1a1a; padding: 10px; margin-top: 10px; border-left: 4px solid #555; }
+    </style>
+</head>
+<body>
+
+    <h2>TACTICAL HYDRATION</h2>
+    
+    <label>Time of 1st Bottle:</label>
+    <input type="time" id="startTime" required>
+    
+    <button onclick="calculateDrops()">Calculate Schedule</button>
+
+    <div id="output"></div>
+
+    <script>
+        function formatTime(minutes) {
+            let h = Math.floor(minutes / 60);
+            let m = Math.floor(minutes % 60);
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; 
+            m = m < 10 ? '0' + m : m;
+            return h + ':' + m + ' ' + ampm;
+        }
+
+        function calculateDrops() {
+            const timeInput = document.getElementById('startTime').value;
+            const output = document.getElementById('output');
+            
+            if (!timeInput) {
+                output.innerHTML = "<span class='danger'>ERROR: ENTER 1ST BOTTLE TIME.</span>";
+                return;
+            }
+
+            const [hours, minutes] = timeInput.split(':').map(Number);
+            const startMins = (hours * 60) + minutes;
+            const cutoffMins = 20 * 60; // 8:00 PM Hard Cutoff
+
+            const diffMins = cutoffMins - startMins;
+
+            if (diffMins <= 0) {
+                output.innerHTML = "<span class='danger'>STATUS: IMPOSSIBLE.<br>It is past the 8:00 PM cutoff. Abort 4-bottle protocol for today.</span>";
+                return;
+            }
+
+            const intervalMins = diffMins / 3;
+            const intervalHrs = (intervalMins / 60).toFixed(1);
+
+            let statusHtml = "";
+            let scheduleHtml = "";
+
+            if (intervalMins < 90) {
+                statusHtml = `<span class='danger'>STATUS: DANGEROUS / IMPOSSIBLE.</span><br><br>Gap is only ${intervalHrs} hours. You do not have enough biological time to safely process 4 bottles before sleep.<br><br><b>PROTOCOL:</b> Drop daily goal to 3 bottles today. Space remaining 2 bottles evenly.`;
+            } else {
+                if (intervalMins >= 90 && intervalMins <= 150) {
+                    statusHtml = `<span class='minimum'>STATUS: ABSOLUTE MINIMUM GAP.</span><br>Interval: ${intervalHrs} hours.<br>You are at the limit of kidney processing speed. Do not chug.`;
+                } else {
+                    statusHtml = `<span class='optimal'>STATUS: OPTIMAL SWEET SPOT.</span><br>Interval: ${intervalHrs} hours.<br>Perfect physiological pacing.`;
+                }
+
+                scheduleHtml = `
+                    <div class='time-block'>
+                        <b>Bottle 2:</b> ${formatTime(startMins + intervalMins)}<br>
+                        <b>Bottle 3:</b> ${formatTime(startMins + (intervalMins * 2))}<br>
+                        <b>Bottle 4:</b> 8:00 PM (Final Drop)
+                    </div>
+                `;
+            }
+
+            output.innerHTML = statusHtml + scheduleHtml;
+        }
+    </script>
+</body>
+</html>
