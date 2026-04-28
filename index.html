@@ -1,4 +1,3 @@
- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,12 +80,12 @@
 
             const [hours, minutes] = timeInput.split(':').map(Number);
             const startMins = (hours * 60) + minutes;
-            const cutoffMins = 20 * 60; // 8:00 PM Hard Cutoff
+            const cutoffMins = 18.5 * 60; // 6:30 PM Hard Cutoff
 
             const diffMins = cutoffMins - startMins;
 
             if (diffMins <= 0) {
-                output.innerHTML = "<span class='danger'>STATUS: IMPOSSIBLE.<br>It is past the 8:00 PM cutoff. Abort 4-bottle protocol for today.</span>";
+                output.innerHTML = "<span class='danger'>STATUS: IMPOSSIBLE.<br>It is past the 6:30 PM cutoff. Abort 4-bottle protocol for today.</span>";
                 return;
             }
 
@@ -97,7 +96,7 @@
             let scheduleHtml = "";
 
             if (intervalMins < 90) {
-                statusHtml = `<span class='danger'>STATUS: DANGEROUS / IMPOSSIBLE.</span><br><br>Gap is only ${intervalHrs} hours. You do not have enough biological time to safely process 4 bottles before sleep.<br><br><b>PROTOCOL:</b> Drop daily goal to 3 bottles today. Space remaining 2 bottles evenly.`;
+                statusHtml = `<span class='danger'>STATUS: DANGEROUS / IMPOSSIBLE.</span><br><br>Gap is only ${intervalHrs} hours. You do not have enough biological time to safely process 4 bottles before the 6:30 PM cutoff.<br><br><b>PROTOCOL:</b> Drop daily goal to 3 bottles today. Space remaining 2 bottles evenly before 6:30 PM.`;
             } else {
                 if (intervalMins >= 90 && intervalMins <= 150) {
                     statusHtml = `<span class='minimum'>STATUS: ABSOLUTE MINIMUM GAP.</span><br>Interval: ${intervalHrs} hours.<br>You are at the limit of kidney processing speed. Do not chug.`;
@@ -109,7 +108,7 @@
                     <div class='time-block'>
                         <b>Bottle 2:</b> ${formatTime(startMins + intervalMins)}<br>
                         <b>Bottle 3:</b> ${formatTime(startMins + (intervalMins * 2))}<br>
-                        <b>Bottle 4:</b> 8:00 PM (Final Drop)
+                        <b>Bottle 4:</b> 6:30 PM (Final Drop)
                     </div>
                 `;
             }
