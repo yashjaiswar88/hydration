@@ -44,14 +44,16 @@
         .danger { color: #ff4444; font-weight: bold; }
         .optimal { color: #00ff00; font-weight: bold; }
         .minimum { color: #ffaa00; font-weight: bold; }
-        .time-block { background: #1a1a1a; padding: 10px; margin-top: 10px; border-left: 4px solid #555; }
+        .time-block { background: #1a1a1a; padding: 15px; margin-top: 15px; border-left: 4px solid #555; }
+        .start-time { color: #88ff88; }
+        .finish-time { color: #ff8888; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <h2>TACTICAL HYDRATION</h2>
     
-    <label>Time of 1st Bottle:</label>
+    <label>Time 1st Bottle Finished:</label>
     <input type="time" id="startTime" required>
     
     <button onclick="calculateDrops()">Calculate Schedule</button>
@@ -104,11 +106,26 @@
                     statusHtml = `<span class='optimal'>STATUS: OPTIMAL SWEET SPOT.</span><br>Interval: ${intervalHrs} hours.<br>Perfect physiological pacing.`;
                 }
 
+                // Calculate Start (12 mins prior) and Finish Times
+                const b2Finish = startMins + intervalMins;
+                const b2Start = b2Finish - 12;
+                
+                const b3Finish = startMins + (intervalMins * 2);
+                const b3Start = b3Finish - 12;
+
                 scheduleHtml = `
                     <div class='time-block'>
-                        <b>Bottle 2:</b> ${formatTime(startMins + intervalMins)}<br>
-                        <b>Bottle 3:</b> ${formatTime(startMins + (intervalMins * 2))}<br>
-                        <b>Bottle 4:</b> 6:30 PM (Final Drop)
+                        <b>Bottle 2:</b><br>
+                        <span class='start-time'>► START: ${formatTime(b2Start)}</span><br>
+                        <span class='finish-time'>■ FINISH: ${formatTime(b2Finish)}</span><br><br>
+                        
+                        <b>Bottle 3:</b><br>
+                        <span class='start-time'>► START: ${formatTime(b3Start)}</span><br>
+                        <span class='finish-time'>■ FINISH: ${formatTime(b3Finish)}</span><br><br>
+                        
+                        <b>Bottle 4:</b><br>
+                        <span class='start-time'>► START: 6:18 PM</span><br>
+                        <span class='finish-time'>■ FINISH: 6:30 PM (Final Drop)</span>
                     </div>
                 `;
             }
